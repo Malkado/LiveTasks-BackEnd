@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 02-Maio-2020 às 15:48
+-- Generation Time: 06-Maio-2020 às 10:58
 -- Versão do servidor: 10.1.36-MariaDB
 -- versão do PHP: 7.2.10
 
@@ -60,7 +60,7 @@ CREATE TABLE `user` (
   `Email_User` varchar(256) NOT NULL,
   `Login_User` varchar(256) NOT NULL,
   `Pass_User` varchar(30) NOT NULL,
-  `Token_User` varchar(30) DEFAULT NULL
+  `Token_User` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -83,7 +83,8 @@ INSERT INTO `user` (`Id_User`, `Name_User`, `Email_User`, `Login_User`, `Pass_Us
 (22, 'Luiz', '226@email.com', 'luh1245', '827ccb0eea8a706c4c34a16891f84e', NULL),
 (23, 'Luiz', '2345@email.com', 'lanny12', '$1$JtVPPTlW$q4jMrMmMq8SkjTfWxl', NULL),
 (24, 'Luiz', '23145@email.com', 'lanny', '$1$a9Pdl7YW$RAYrlkzJ9Phsol3YyQ', NULL),
-(25, 'Luiz', '2lanny@email.com', 'lanny1', 'MTIz', 'c393b2b19a0390037f571778065016');
+(25, 'Luiz', '2lanny@email.com', 'lanny1', 'MTIz', 'ec1e2fc65a848a61bb7a588f74e5834a'),
+(26, 'lannty', '2laaaaanny@email.com', 'lanny-1', 'MzQ1Ng==', NULL);
 
 --
 -- Indexes for dumped tables
@@ -129,7 +130,7 @@ ALTER TABLE `task_type`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `Id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `Id_User` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Constraints for dumped tables

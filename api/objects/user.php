@@ -4,7 +4,7 @@ class User
     private $conn;
     private $table_name = "user";
 
-
+    public $Id_User;
     public $Name_User;
     public $Email_User;
     public $Login_User;
@@ -12,6 +12,7 @@ class User
     public $Token_User;
 
     public $Error;
+    public $Json;
     public function __construct($db)
     {
         $this->conn = $db;
@@ -70,7 +71,6 @@ class User
     }
     function auth()
     {
-        echo $this->Login_User;
         $verify_login = "SELECT Pass_User FROM user WHERE Login_User=:login";
         $vrf = $this->conn->prepare($verify_login);
 
@@ -111,6 +111,66 @@ class User
         } else {
             $this->Error = "Usuário não encontrado.";
             return false;
+        }
+    }
+    function Logout()
+    {
+        $verify_user_token = "SELECT Token_User FROM user WHERE Id_User =:id";
+        $vrf = $this->conn->prepare($verify_user_token);
+
+        $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+        $vrf->bindParam(":id", $this->Id_User);
+        $vrf->execute();
+        if ($vrf->rowCount() != 0) {
+            $data = $vrf->fetchAll();
+            $token =  $data[0][0];
+
+            if ($token == $this->Token_User) {
+                $modify_Token = "UPDATE user SET Token_User= NULL WHERE Id_User =:id";
+                $stmt = $this->conn->prepare($modify_Token);
+                $stmt->bindParam(":id", $this->Id_User);
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+    function profile()
+    {
+        $verify_user_token = "SELECT Token_User FROM user WHERE Id_User =:id";
+        $vrf = $this->conn->prepare($verify_user_token);
+
+        $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+        $vrf->bindParam(":id", $this->Id_User);
+        $vrf->execute();
+        if ($vrf->rowCount() != 0) {
+            $data = $vrf->fetchAll();
+            $token =  $data[0][0];
+            if ($token == $this->Token_User) {
+                $query = "SELECT Id_User, Name_User, Email_User, Login_User, Pass_User 
+                FROM user WHERE Id_User=:id";
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam(":id", $this->Id_User);
+                if ($stmt->execute()) {
+                    $data = $stmt->fetchAll();
+                    $this->Json = array("profile" => array(
+                        "Id_User" => $data[0]['Id_User'],
+                        "Name_User" => $data[0]['Name_User'],
+                        "Email_User" => $data[0]['Email_User'],
+                        "Login_User" => $data[0]['Login_User'],
+                        "Pass_User" => base64_decode($data[0]['Pass_User'])
+                    ));
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
     }
 }
