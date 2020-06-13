@@ -1,9 +1,16 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+header('Content-Type: application/json');
+$method = $_SERVER['REQUEST_METHOD'];
+if ($method == "OPTIONS") {
+    header('Access-Control-Allow-Origin: *');
+    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+    header("HTTP/1.1 200 OK");
+    die();
+}
 if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIONS") {
-    header("Access-Control-Allow-Origin:*");
-    header('Access-Control-Allow-Methods: POST, OPTIONS');
-    header("Content-Type: application/json; charset=UTF-8");
-
     include_once '../config/database.php';
     include_once '../objects/user.php';
 
@@ -38,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIO
             ));
         }
     } else {
-        
+
         http_response_code(400);
         echo json_encode(array(
             "message" =>
@@ -49,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIO
 } else {
     http_response_code(400);
     echo json_encode(array(
-        "message" => "O tipo da requisição está incorreto.", 
+        "message" => "O tipo da requisição está incorreto.",
         "statusCode" => 400
     ));
 }
