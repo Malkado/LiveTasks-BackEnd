@@ -32,8 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIO
         $user->Pass_User = $data->pass;
         if ($user->auth()) {
             $token = $user->Token_User;
+            $id = $user->Id_User;
+            $name = $user->Name_User;
             http_response_code(200);
-            echo json_encode(array("message" => "Função executada com sucesso.", "Token" => $token));
+            echo json_encode(array(
+                "message" => "Função executada com sucesso.",
+                "Token" => $token,
+                "Id" => $id,
+                "Name" => $name
+            ));
         } else {
             http_response_code(400);
             echo json_encode(array(

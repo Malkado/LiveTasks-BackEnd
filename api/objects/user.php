@@ -98,10 +98,23 @@ class User
                 $stmt->bindParam(":token", $this->Token_User);
 
                 if ($stmt->execute()) {
+                    $select_id_and_name = "SELECT Name_User, Id_User FROM user WHERE Login_User=:login";
 
-                    return true;
+                    $svrf = $this->conn->prepare($select_id_and_name);
+
+                    $svrf->bindParam(":login", $this->Login_User);
+                    if ($svrf->execute()) {
+                        if ($svrf->rowCount() != 0) {
+                            $data = $svrf->fetchAll();
+                            $this->Name_User = $data[0][0];
+                            $this->Id_User = $data[0][1];
+
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
                 } else {
-
                     return false;
                 }
             } else {
