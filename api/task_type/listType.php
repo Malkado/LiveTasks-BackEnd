@@ -1,6 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, OPTIONS");
 header("Access-Control-Allow-Headers: Token, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
 header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
@@ -10,47 +10,35 @@ if ($method == "OPTIONS") {
     header("HTTP/1.1 200 OK");
     die();
 }
-if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIONS") {
+if ($_SERVER['REQUEST_METHOD'] == "GET" || $_SERVER['REQUEST_METHOD'] == "OPTIONS") {
 
 
     include_once '../config/database.php';
-    include_once '../objects/task.php';
+    include_once '../objects/tasktype.php';
 
     $database = new Database();
     $db = $database->getConnection();
 
-    $task = new Task($db);
+    $task_type = new Task_Type($db);
 
-    $data = json_decode(file_get_contents("php://input"));
 
     $header = apache_request_headers();
     $token = $header["Token"];
     if ($token) {
-        if (
-            !empty($data->user_id)
-        ) {
-            $task->Token_User = $token;
-            $task->Id_User = $data->user_id;
-            if ($task->listTask()) {
 
-                http_response_code(200);
-                echo json_encode(array(
-                    "message" => "Função executada com sucesso.",
-                    "statusCode" => 200,
-                    "results" => $task->Json
-                ));
-            } else {
-                http_response_code(400);
-                echo json_encode(array(
-                    "message" => "Dados incorretos.",
-                    "statusCode" => 400
-                ));
-            }
-        } else {
-            http_response_code(403);
+        $task_type->Token_User = $token;
+        if ($task_type->listTask_type()) {
+
+            http_response_code(200);
             echo json_encode(array(
-                "message" =>
-                "Não foi possivel obter os valores na requisição.",
+                "message" => "Função executada com sucesso.",
+                "statusCode" => 200,
+                "results" => $task_type->Json
+            ));
+        } else {
+            http_response_code(400);
+            echo json_encode(array(
+                "message" => "Dados incorretos.",
                 "statusCode" => 400
             ));
         }
