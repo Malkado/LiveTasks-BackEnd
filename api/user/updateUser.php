@@ -1,16 +1,16 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+header("Access-Control-Allow-Methods: PUT, OPTIONS");
+header("Access-Control-Allow-Headers: Token, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
 header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
 if ($method == "OPTIONS") {
     header('Access-Control-Allow-Origin: *');
-    header("Access-Control-Allow-Headers:  X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+    header("Access-Control-Allow-Headers: Token, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
     header("HTTP/1.1 200 OK");
     die();
 }
-if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIONS") {
+if ($_SERVER['REQUEST_METHOD'] == "PUT" || $_SERVER['REQUEST_METHOD'] == "OPTIONS") {
     include_once '../config/database.php';
     include_once '../objects/user.php';
 
@@ -20,28 +20,30 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" || $_SERVER['REQUEST_METHOD'] == "OPTIO
     $user = new User($db);
 
     $data = json_decode(file_get_contents("php://input"));
-
+    $header = apache_request_headers();
+    $token = $header["Token"];
     if (
+        !empty($data->idUser) &&
         !empty($data->name) &&
         !empty($data->email) &&
-        !empty($data->pass) &&
-        !empty($data->login)
+        !empty($data->pass)
     ) {
+        $user->Id_User = $data->idUser;
         $user->Name_User = $data->name;
         $user->Email_User = $data->email;
-        $user->Login_User = $data->login;
         $user->Pass_User = $data->pass;
-        if ($user->create()) {
+        $user->Token_User = $token;
+        if ($user->updateUser()) {
             http_response_code(200);
             echo json_encode(array(
                 "message" => "Função executada com sucesso.",
                 "statusCode" => 200
             ));
         } else {
-            http_response_code(500);
+            http_response_code(400);
             echo json_encode(array(
-                "message" => "Erro interno. Tente novamente mais tarde.",
-                "statusCode" => 500
+                "message" => "Dados incorretos.",
+                "statusCode" => 400
             ));
         }
     } else {

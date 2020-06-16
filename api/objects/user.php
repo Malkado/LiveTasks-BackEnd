@@ -186,4 +186,86 @@ class User
             }
         }
     }
+    function updateUser()
+    {
+        $verify_user_token = "SELECT Token_User FROM user WHERE Id_User =:id";
+        $vrf = $this->conn->prepare($verify_user_token);
+
+        $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+        $vrf->bindParam(":id", $this->Id_User);
+        $vrf->execute();
+        if ($vrf->rowCount() != 0) {
+            $data = $vrf->fetchAll();
+            $token =  $data[0][0];
+            if ($token == $this->Token_User) {
+                $verify_user = "SELECT Name_User FROM user WHERE Id_User =:id";
+                $vrf = $this->conn->prepare($verify_user);
+
+                $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+                $vrf->bindParam(":id", $this->Id_User);
+                $vrf->execute();
+                if ($vrf->rowCount() != 0) {
+                    $queryUpdate = "UPDATE user SET Name_User=:name_user, 
+                    Email_User=:email,Pass_User =:pass WHERE Id_User=:user";
+                    $uvrf = $this->conn->prepare($queryUpdate);
+
+                    $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+                    $this->Name_User = htmlspecialchars(strip_tags($this->Name_User));
+                    $this->Email_User = htmlspecialchars(strip_tags($this->Email_User));
+                    $this->Pass_User = htmlspecialchars(strip_tags($this->Pass_User));
+
+                    $this->Pass_User = base64_encode($this->Pass_User);
+
+                    $uvrf->bindParam(":user", $this->Id_User);
+                    $uvrf->bindParam(":name_user", $this->Name_User);
+                    $uvrf->bindParam(":email", $this->Email_User);
+                    $uvrf->bindParam(":pass", $this->Pass_User);
+                    if ($uvrf->execute()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    function deleteUser()
+    {
+        $verify_user_token = "SELECT Token_User FROM user WHERE Id_User =:id";
+        $vrf = $this->conn->prepare($verify_user_token);
+
+        $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+        $vrf->bindParam(":id", $this->Id_User);
+        $vrf->execute();
+        if ($vrf->rowCount() != 0) {
+            $data = $vrf->fetchAll();
+            $token =  $data[0][0];
+            if ($token == $this->Token_User) {
+                $verify_user = "SELECT Name_User FROM user WHERE Id_User =:id";
+                $vrf = $this->conn->prepare($verify_user);
+
+                $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+                $vrf->bindParam(":id", $this->Id_User);
+                $vrf->execute();
+                if ($vrf->rowCount() != 0) {
+                    $queryDelete = "DELETE FROM user WHERE Id_User=:user";
+                    $dvrf = $this->conn->prepare($queryDelete);
+
+                    $this->Id_User = htmlspecialchars(strip_tags($this->Id_User));
+
+                    $dvrf->bindParam(":user", $this->Id_User);
+
+                    if ($dvrf->execute()) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
 }
